@@ -320,7 +320,23 @@ function clearForm() {
   editing = null;
 }
 
-function saveCase() {
+function saveCase()saveData();
+  syncToSheets();
+  render();
+  toggleForm();
+}
+
+function syncToSheets() {
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0e4r-xPpR4KQoTlJALsaE4AgytBJP43lIECf1n16bXwb9_rS8sRo8z7wLKHc3l7N3/exec
+';
+  
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(cases)
+  })
+  .then(res => res.json())
+  .catch(err => console.log('Sync error:', err));
+}{
   const ref = document.getElementById('caseRef').value.trim();
   const name = document.getElementById('clientName').value.trim();
   
@@ -377,6 +393,7 @@ function deleteCase(id) {
     cases = cases.filter(c => c.id !== id);
     render();
     saveData();
+    syncToSheets();
   }
 }
 
@@ -447,4 +464,5 @@ render();
 </script>
 
 </body>
+
 </html>

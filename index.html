@@ -4,112 +4,25 @@
 <meta charset="UTF-8">
 <title>Solicitor Case Tracker</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background: #f5f5f5;
-}
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-h1 {
-  color: #333;
-  margin-top: 0;
-}
-.controls {
-  margin-bottom: 20px;
-}
-button {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-right: 10px;
-}
-button:hover {
-  background: #0056b3;
-}
-.form-section {
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  border-left: 4px solid #007bff;
-  display: none;
-}
-.form-section.show {
-  display: block;
-}
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-.form-row.full {
-  grid-template-columns: 1fr;
-}
-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-  font-size: 13px;
-  color: #333;
-}
-input, select, textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 13px;
-  font-family: Arial;
-}
-textarea {
-  min-height: 80px;
-}
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0,123,255,0.3);
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-th {
-  background: #e9ecef;
-  padding: 12px;
-  text-align: left;
-  font-weight: bold;
-  border-bottom: 2px solid #007bff;
-  font-size: 13px;
-  color: #333;
-}
-td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-  font-size: 13px;
-}
-tr:hover {
-  background: #f9f9f9;
-}
-.status {
-  display: inline-block;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-}
+body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+.container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+h1 { color: #333; margin-top: 0; }
+.controls { margin-bottom: 20px; }
+button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-right: 10px; }
+button:hover { background: #0056b3; }
+.form-section { background: #f9f9f9; padding: 20px; border-radius: 4px; margin-bottom: 20px; border-left: 4px solid #007bff; display: none; }
+.form-section.show { display: block; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+.form-row.full { grid-template-columns: 1fr; }
+label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px; color: #333; }
+input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; font-family: Arial; }
+textarea { min-height: 80px; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: #007bff; box-shadow: 0 0 5px rgba(0,123,255,0.3); }
+table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+th { background: #e9ecef; padding: 12px; text-align: left; font-weight: bold; border-bottom: 2px solid #007bff; font-size: 13px; color: #333; }
+td { padding: 12px; border-bottom: 1px solid #ddd; font-size: 13px; }
+tr:hover { background: #f9f9f9; }
+.status { display: inline-block; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
 .status-new { background: #cfe2ff; color: #084298; }
 .status-progress { background: #fff3cd; color: #664d03; }
 .status-hold { background: #e2e3e5; color: #41464b; }
@@ -118,50 +31,17 @@ tr:hover {
 .priority-high { color: #dc3545; font-weight: bold; }
 .priority-medium { color: #007bff; font-weight: bold; }
 .priority-low { color: #6c757d; font-weight: bold; }
-.action-buttons {
-  display: flex;
-  gap: 5px;
-}
-.btn-edit {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-}
-.btn-edit:hover {
-  background: #0056b3;
-}
-.btn-delete {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-}
-.btn-delete:hover {
-  background: #c82333;
-}
-.stats {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 4px;
-  display: flex;
-  gap: 30px;
-  font-size: 14px;
-}
-.stat { }
+.action-buttons { display: flex; gap: 5px; }
+.btn-edit { background: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.btn-edit:hover { background: #0056b3; }
+.btn-delete { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.btn-delete:hover { background: #c82333; }
+.stats { background: #f8f9fa; padding: 15px; border-radius: 4px; display: flex; gap: 30px; font-size: 14px; }
 .stat-label { font-weight: bold; color: #333; }
 .stat-value { color: #007bff; font-weight: bold; margin-left: 5px; }
-.empty-message {
-  text-align: center;
-  color: #999;
-  padding: 30px;
-}
+.empty-message { text-align: center; color: #999; padding: 30px; }
+.btn-export { background: #28a745; }
+.btn-export:hover { background: #218838; }
 </style>
 </head>
 <body>
@@ -171,83 +51,34 @@ tr:hover {
   
   <div class="controls">
     <button onclick="toggleForm()">+ New Case</button>
-    <button onclick="exportCSV()" style="background: #28a745;">Export to CSV</button>
-    <button onclick="downloadBackup()" style="background: #6f42c1;">Download Backup</button>
-    <button onclick="syncGoogleDrive()" style="background: #ea4335;" id="syncBtn">Sync with Google Drive</button>
-    <span id="syncStatus" style="margin-left: 10px; color: #666; font-size: 13px;"></span>
+    <button class="btn-export" onclick="exportCSV()">Export to CSV</button>
   </div>
 
   <div class="form-section" id="form">
     <h2>Add/Edit Case</h2>
     
     <div class="form-row">
-      <div>
-        <label>Case Reference *</label>
-        <input type="text" id="caseRef" placeholder="e.g. CASE-001">
-      </div>
-      <div>
-        <label>Client Name *</label>
-        <input type="text" id="clientName" placeholder="Full name">
-      </div>
+      <div><label>Case Reference *</label><input type="text" id="caseRef" placeholder="e.g. CASE-001"></div>
+      <div><label>Client Name *</label><input type="text" id="clientName" placeholder="Full name"></div>
     </div>
 
     <div class="form-row">
-      <div>
-        <label>Case Type</label>
-        <select id="caseType">
-          <option value="">Select type</option>
-          <option>Criminal</option>
-          <option>Civil</option>
-          <option>Family Law</option>
-          <option>Conveyancing</option>
-          <option>Employment</option>
-          <option>Immigration</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div>
-        <label>Status</label>
-        <select id="status">
-          <option>New</option>
-          <option>In Progress</option>
-          <option>On Hold</option>
-          <option>Awaiting Action</option>
-          <option>Closed</option>
-        </select>
-      </div>
+      <div><label>Case Type</label><select id="caseType"><option value="">Select type</option><option>Criminal</option><option>Civil</option><option>Family Law</option><option>Conveyancing</option><option>Employment</option><option>Immigration</option><option>Other</option></select></div>
+      <div><label>Status</label><select id="status"><option>New</option><option>In Progress</option><option>On Hold</option><option>Awaiting Action</option><option>Closed</option></select></div>
     </div>
 
     <div class="form-row">
-      <div>
-        <label>Open Date</label>
-        <input type="date" id="openDate">
-      </div>
-      <div>
-        <label>Next Review</label>
-        <input type="date" id="nextReview">
-      </div>
+      <div><label>Open Date</label><input type="date" id="openDate"></div>
+      <div><label>Next Review</label><input type="date" id="nextReview"></div>
     </div>
 
     <div class="form-row">
-      <div>
-        <label>Priority</label>
-        <select id="priority">
-          <option>Low</option>
-          <option selected>Medium</option>
-          <option>High</option>
-        </select>
-      </div>
-      <div>
-        <label>Assigned Solicitor</label>
-        <input type="text" id="solicitor" placeholder="Name">
-      </div>
+      <div><label>Priority</label><select id="priority"><option>Low</option><option selected>Medium</option><option>High</option></select></div>
+      <div><label>Assigned Solicitor</label><input type="text" id="solicitor" placeholder="Name"></div>
     </div>
 
     <div class="form-row full">
-      <div>
-        <label>Notes</label>
-        <textarea id="notes" placeholder="Case details and notes"></textarea>
-      </div>
+      <div><label>Notes</label><textarea id="notes" placeholder="Case details and notes"></textarea></div>
     </div>
 
     <div style="margin-top: 15px;">
@@ -257,52 +88,39 @@ tr:hover {
   </div>
 
   <table>
-    <thead>
-      <tr>
-        <th>Case Ref</th>
-        <th>Client</th>
-        <th>Type</th>
-        <th>Status</th>
-        <th>Opened</th>
-        <th>Next Review</th>
-        <th>Priority</th>
-        <th>Solicitor</th>
-        <th>Notes</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="tbody">
-      <tr><td colspan="10" class="empty-message">No cases yet. Click "New Case" to add one.</td></tr>
-    </tbody>
+    <thead><tr><th>Case Ref</th><th>Client</th><th>Type</th><th>Status</th><th>Opened</th><th>Next Review</th><th>Priority</th><th>Solicitor</th><th>Notes</th><th>Actions</th></tr></thead>
+    <tbody id="tbody"><tr><td colspan="10" class="empty-message">No cases yet. Click "New Case" to add one.</td></tr></tbody>
   </table>
 
   <div class="stats">
-    <div class="stat"><span class="stat-label">Total:</span><span class="stat-value" id="total">0</span></div>
-    <div class="stat"><span class="stat-label">In Progress:</span><span class="stat-value" id="inprog">0</span></div>
-    <div class="stat"><span class="stat-label">On Hold:</span><span class="stat-value" id="onhold">0</span></div>
-    <div class="stat"><span class="stat-label">Closed:</span><span class="stat-value" id="closed">0</span></div>
+    <div><span class="stat-label">Total:</span><span class="stat-value" id="total">0</span></div>
+    <div><span class="stat-label">In Progress:</span><span class="stat-value" id="inprog">0</span></div>
+    <div><span class="stat-label">On Hold:</span><span class="stat-value" id="onhold">0</span></div>
+    <div><span class="stat-label">Closed:</span><span class="stat-value" id="closed">0</span></div>
   </div>
 </div>
 
 <script>
-let cases = [];
-let editing = null;
+var cases = [];
+var editing = null;
 
 function saveData() {
-  localStorage.setItem('solicitor_cases', JSON.stringify(cases));
+  localStorage.setItem('cases', JSON.stringify(cases));
 }
 
 function loadData() {
-  const saved = localStorage.getItem('solicitor_cases');
+  var saved = localStorage.getItem('cases');
   if (saved) {
     cases = JSON.parse(saved);
   }
 }
 
 function toggleForm() {
-  const form = document.getElementById('form');
-  form.classList.toggle('show');
+  var form = document.getElementById('form');
   if (form.classList.contains('show')) {
+    form.classList.remove('show');
+  } else {
+    form.classList.add('show');
     clearForm();
   }
 }
@@ -320,32 +138,16 @@ function clearForm() {
   editing = null;
 }
 
-function saveCase()saveData();
-  syncToSheets();
-  render();
-  toggleForm();
-}
-
-function syncToSheets() {
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0e4r-xPpR4KQoTlJALsaE4AgytBJP43lIECf1n16bXwb9_rS8sRo8z7wLKHc3l7N3/exec
-';
-  
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify(cases)
-  })
-  .then(res => res.json())
-  .catch(err => console.log('Sync error:', err));
-}{
-  const ref = document.getElementById('caseRef').value.trim();
-  const name = document.getElementById('clientName').value.trim();
+function saveCase() {
+  var ref = document.getElementById('caseRef').value.trim();
+  var name = document.getElementById('clientName').value.trim();
   
   if (!ref || !name) {
     alert('Case Reference and Client Name required');
     return;
   }
 
-  const caseData = {
+  var caseData = {
     id: editing || Date.now(),
     caseRef: ref,
     clientName: name,
@@ -358,21 +160,31 @@ function syncToSheets() {
     notes: document.getElementById('notes').value
   };
 
-  const idx = cases.findIndex(c => c.id === editing);
-  if (idx !== -1) {
-    cases[idx] = caseData;
-  } else {
+  var found = false;
+  for (var i = 0; i < cases.length; i++) {
+    if (cases[i].id === editing) {
+      cases[i] = caseData;
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
     cases.push(caseData);
   }
 
-  loadData();
+  saveData();
   render();
   toggleForm();
-  saveData();
 }
 
 function editCase(id) {
-  const c = cases.find(x => x.id === id);
+  var c = null;
+  for (var i = 0; i < cases.length; i++) {
+    if (cases[i].id === id) {
+      c = cases[i];
+      break;
+    }
+  }
   if (c) {
     document.getElementById('caseRef').value = c.caseRef;
     document.getElementById('clientName').value = c.clientName;
@@ -390,10 +202,15 @@ function editCase(id) {
 
 function deleteCase(id) {
   if (confirm('Delete this case?')) {
-    cases = cases.filter(c => c.id !== id);
-    render();
+    var newCases = [];
+    for (var i = 0; i < cases.length; i++) {
+      if (cases[i].id !== id) {
+        newCases.push(cases[i]);
+      }
+    }
+    cases = newCases;
     saveData();
-    syncToSheets();
+    render();
   }
 }
 
@@ -413,32 +230,35 @@ function getPriorityClass(p) {
 }
 
 function render() {
-  const tbody = document.getElementById('tbody');
+  var tbody = document.getElementById('tbody');
   
   if (cases.length === 0) {
     tbody.innerHTML = '<tr><td colspan="10" class="empty-message">No cases yet. Click "New Case" to add one.</td></tr>';
   } else {
-    tbody.innerHTML = cases.map(c => {
-      const notes = c.notes.length > 40 ? c.notes.substring(0, 40) + '...' : c.notes;
-      return '<tr>' +
-        '<td><strong>' + c.caseRef + '</strong></td>' +
-        '<td>' + c.clientName + '</td>' +
-        '<td>' + (c.caseType || '-') + '</td>' +
-        '<td><span class="status ' + getStatusClass(c.status) + '">' + c.status + '</span></td>' +
-        '<td>' + (c.openDate || '-') + '</td>' +
-        '<td>' + (c.nextReview || '-') + '</td>' +
-        '<td><span class="' + getPriorityClass(c.priority) + '">' + c.priority + '</span></td>' +
-        '<td>' + (c.solicitor || '-') + '</td>' +
-        '<td>' + (notes || '-') + '</td>' +
-        '<td><div class="action-buttons"><button class="btn-edit" onclick="editCase(' + c.id + ')">Edit</button><button class="btn-delete" onclick="deleteCase(' + c.id + ')">Delete</button></div></td>' +
-        '</tr>';
-    }).join('');
+    var html = '';
+    for (var i = 0; i < cases.length; i++) {
+      var c = cases[i];
+      var notes = c.notes.length > 40 ? c.notes.substring(0, 40) + '...' : c.notes;
+      html += '<tr><td><strong>' + c.caseRef + '</strong></td><td>' + c.clientName + '</td><td>' + (c.caseType || '-') + '</td><td><span class="status ' + getStatusClass(c.status) + '">' + c.status + '</span></td><td>' + (c.openDate || '-') + '</td><td>' + (c.nextReview || '-') + '</td><td><span class="' + getPriorityClass(c.priority) + '">' + c.priority + '</span></td><td>' + (c.solicitor || '-') + '</td><td>' + (notes || '-') + '</td><td><button class="btn-edit" onclick="editCase(' + c.id + ')">Edit</button><button class="btn-delete" onclick="deleteCase(' + c.id + ')">Delete</button></td></tr>';
+    }
+    tbody.innerHTML = html;
   }
 
   document.getElementById('total').textContent = cases.length;
-  document.getElementById('inprog').textContent = cases.filter(c => c.status === 'In Progress').length;
-  document.getElementById('onhold').textContent = cases.filter(c => c.status === 'On Hold').length;
-  document.getElementById('closed').textContent = cases.filter(c => c.status === 'Closed').length;
+  
+  var inProg = 0;
+  var onHold = 0;
+  var closed = 0;
+  
+  for (var i = 0; i < cases.length; i++) {
+    if (cases[i].status === 'In Progress') inProg++;
+    if (cases[i].status === 'On Hold') onHold++;
+    if (cases[i].status === 'Closed') closed++;
+  }
+  
+  document.getElementById('inprog').textContent = inProg;
+  document.getElementById('onhold').textContent = onHold;
+  document.getElementById('closed').textContent = closed;
 }
 
 function exportCSV() {
@@ -447,22 +267,23 @@ function exportCSV() {
     return;
   }
 
-  let csv = 'Case Ref,Client,Type,Status,Opened,Next Review,Priority,Solicitor,Notes\n';
-  cases.forEach(c => {
+  var csv = 'Case Ref,Client,Type,Status,Opened,Next Review,Priority,Solicitor,Notes\n';
+  for (var i = 0; i < cases.length; i++) {
+    var c = cases[i];
     csv += '"' + c.caseRef + '","' + c.clientName + '","' + c.caseType + '","' + c.status + '","' + c.openDate + '","' + c.nextReview + '","' + c.priority + '","' + c.solicitor + '","' + c.notes.replace(/"/g, '""') + '"\n';
-  });
+  }
 
-  const blob = new Blob([csv], {type: 'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  var blob = new Blob([csv], {type: 'text/csv'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
   a.href = url;
   a.download = 'cases_' + new Date().toISOString().split('T')[0] + '.csv';
   a.click();
 }
 
+loadData();
 render();
 </script>
 
 </body>
-
 </html>

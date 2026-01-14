@@ -95,6 +95,7 @@ tr:hover { background: #f9f9f9; }
     <button onclick="toggleForm()">+ New Case</button>
     <button class="export" onclick="exportCSV()">Export to CSV</button>
     <button class="sync" onclick="syncSheets()">Sync to Google Sheets</button>
+    <button class="sync" onclick="loadFromSheets()">Load from Google Sheets</button>
     <span class="status-text" id="syncStatus"></span>
   </div>
 
@@ -166,6 +167,18 @@ function loadData() {
   } catch(e) {
     console.log('Load error:', e);
   }
+}
+
+function loadFromSheets() {
+  fetch(SCRIPT_URL).then(function(res) {
+    return res.json();
+  }).then(function(data) {
+    cases = data;
+    saveData();
+    render();
+  }).catch(function(err) {
+    console.log('Load from sheets error:', err);
+  });
 }
 
 function toggleForm() {

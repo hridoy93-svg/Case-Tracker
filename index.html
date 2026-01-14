@@ -2,6 +2,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#007bff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Case Tracker">
+<link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23007bff' width='192' height='192'/><text x='96' y='120' font-size='80' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>CT</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23007bff' width='192' height='192' rx='40'/><text x='96' y='120' font-size='80' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>CT</text></svg>">
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Solicitor Case Tracker&quot;,&quot;short_name&quot;:&quot;Case Tracker&quot;,&quot;start_url&quot;:&quot;/&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;theme_color&quot;:&quot;#007bff&quot;,&quot;background_color&quot;:&quot;#ffffff&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,<svg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 192 192&#39;><rect fill=&#39;%23007bff&#39; width=&#39;192&#39; height=&#39;192&#39; rx=&#39;40&#39;/><text x=&#39;96&#39; y=&#39;120&#39; font-size=&#39;80&#39; font-weight=&#39;bold&#39; fill=&#39;white&#39; text-anchor=&#39;middle&#39; font-family=&#39;Arial&#39;>CT</text></svg>&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;,&quot;purpose&quot;:&quot;any&quot;}]}">
 <title>Solicitor Case Tracker</title>
 <style>
 body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
@@ -44,6 +52,38 @@ tr:hover { background: #f9f9f9; }
 .stat-label { font-weight: bold; color: #333; }
 .stat-value { color: #007bff; font-weight: bold; margin-left: 5px; }
 .empty-message { text-align: center; color: #999; padding: 30px; }
+
+@media (max-width: 1024px) {
+  body { padding: 15px; }
+  .container { padding: 15px; }
+  h1 { font-size: 22px; }
+  .controls { gap: 8px; }
+  button { padding: 8px 15px; font-size: 13px; }
+  .form-row { grid-template-columns: 1fr; }
+  th { padding: 8px; font-size: 12px; }
+  td { padding: 8px; font-size: 12px; }
+  .stats { gap: 15px; flex-direction: column; }
+}
+
+@media (max-width: 600px) {
+  body { padding: 10px; }
+  .container { padding: 15px; border-radius: 4px; }
+  h1 { font-size: 18px; margin-bottom: 15px; }
+  .controls { gap: 8px; flex-direction: column; }
+  button { width: 100%; padding: 12px 10px; font-size: 14px; }
+  .form-row { gap: 10px; }
+  label { font-size: 12px; margin-bottom: 4px; }
+  input, select, textarea { padding: 10px; font-size: 16px; }
+  textarea { min-height: 100px; }
+  table { font-size: 11px; }
+  th { padding: 8px 6px; font-size: 11px; }
+  td { padding: 8px 6px; }
+  .btn-small { padding: 5px 8px; font-size: 11px; margin-right: 3px; }
+  .status-text { font-size: 12px; margin-left: 0; margin-top: 5px; }
+  .stats { gap: 10px; }
+  .stat-label { font-size: 13px; }
+  .stat-value { font-size: 14px; }
+}
 </style>
 </head>
 <body>

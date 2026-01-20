@@ -169,6 +169,26 @@ function loadData() {
   }
 }
 
+function exportCSV() {
+  if (cases.length === 0) {
+    alert('No cases to export');
+    return;
+  }
+
+  var csv = 'Case Ref,Client,Type,Status,Opened,Next Review,Priority,Solicitor,Notes\n';
+  for (var i = 0; i < cases.length; i++) {
+    var c = cases[i];
+    csv += '"' + c.caseRef + '","' + c.clientName + '","' + c.caseType + '","' + c.status + '","' + c.openDate + '","' + c.nextReview + '","' + c.priority + '","' + c.solicitor + '","' + c.notes.replace(/"/g, '""') + '"\n';
+  }
+
+  var blob = new Blob([csv], {type: 'text/csv'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'cases_' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+}
+
 function loadFromSheets() {
   fetch(SCRIPT_URL).then(function(res) {
     return res.json();
@@ -329,19 +349,46 @@ function render() {
 
 function syncSheets() {
   var statusEl = document.getElementById('syncStatus');
-  statusEl.textContent = 'Syncing...';
+  statusEl.textContent = 'Loading existing cases...';
   
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify(cases)
-  }).then(function(res) {
-    statusEl.textContent = 'Synced to Google Sheets!';
-    setTimeout(function() {
-      statusEl.textContent = '';
-    }, 3000);
+  fetch(SCRIPT_URL).then(function(res) {
+    return res.json();
+  }).then(function(sheetsData) {
+    var sheetsCaseRefs = {};
+    sheetsData.forEach(function(c) {
+      sheetsCaseRefs[c.caseRef] = true;
+    });
+    
+    var casesToSync = [];
+    
+    sheetsData.forEach(function(c) {
+      casesToSync.push(c);
+    });
+    
+    cases.forEach(function(c) {
+      if (!sheetsCaseRefs[c.caseRef]) {
+        casesToSync.push(c);
+      }
+    });
+    
+    statusEl.textContent = 'Syncing...';
+    
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(casesToSync)
+    }).then(function(res) {
+      cases = casesToSync;
+      saveData();
+      render();
+      statusEl.textContent = 'Synced! All cases updated.';
+      setTimeout(function() {
+        statusEl.textContent = '';
+      }, 3000);
+    }).catch(function(err) {
+      statusEl.textContent = 'Sync failed: ' + err.message;
+    });
   }).catch(function(err) {
-    statusEl.textContent = 'Sync failed: ' + err.message;
-    console.log('Sync error:', err);
+    statusEl.textContent = 'Error: ' + err.message;
   });
 }
 

@@ -244,12 +244,17 @@
         );
 
         filtered.forEach(c => {
+            // Vibe Check: Is the folder link ready?
+            const driveCell = c.folderUrl 
+                ? `<a href="${c.folderUrl}" target="_blank" class="drive-link">📁 Open Folder</a>` 
+                : `<span style="color:#888; font-size:11px;">⏳ Uploading... <br>(Click Refresh in 10s)</span>`;
+
             const row = `<tr>
                 <td><strong>${c.caseRef || ''}</strong></td>
                 <td>${c.clientName || ''}</td>
                 <td><span class="badge status-${(c.status || 'new').toLowerCase().replace(/\s+/g, '')}">${c.status || 'New'}</span></td>
                 <td>${c.solicitor || '-'}</td>
-                <td>${c.folderUrl ? `<a href="${c.folderUrl}" target="_blank" class="drive-link">📁 View</a>` : '<i>Syncing...</i>'}</td>
+                <td>${driveCell}</td>
                 <td>
                     <button class="secondary" style="padding:4px 8px" onclick="editCase(${c.id})">Edit</button>
                     <button class="danger" style="padding:4px 8px" onclick="deleteCase(${c.id})">Del</button>

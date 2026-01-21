@@ -1,5 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitor Case Tracker</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        :root {
+            --primary: #0070f3;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #fafafa;
+            --card-bg: #ffffff;
+            --text: #171717;
+            --border: #eaeaea;
+        }
+
+        body { 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            margin: 0; padding: 20px; 
+            background: var(--bg); color: var(--text);
+            line-height: 1.5;
+        }
+
+        .container { 
+            max-width: 1100px; margin: 0 auto; 
+            background: var(--card-bg); padding: 30px; 
+            border-radius: 12px; border: 1px solid var(--border);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        h1 { margin: 0; font-size: 22px; font-weight: 700; }
+
+        .status-msg { font-size: 13px; font-weight: 600; color: var(--primary); min-height: 20px; }
+
+        .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        
+        button { 
+            background: #000; color: #fff; border: none; padding: 10px 16px; 
+            border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;
+            transition: 0.2s;
+        }
+        button:hover { background: #333; transform: translateY(-1px); }
+        button.secondary { background: #f0f0f0; color: #000; border: 1px solid var(--border); }
+        button.danger { background: var(--danger); color: white; }
+
+        .search-bar {
+            width: 100%; padding: 12px; border: 1px solid var(--border);
+            border-radius: 8px; margin-bottom: 20px; font-size: 14px; box-sizing: border-box;
+        }
+
+        .form-section { 
+            display: none; background: #f9f9f9; padding: 20px; 
+            border-radius: 10px; border: 1px solid var(--border); margin-bottom: 20px; 
+        }
+        .form-section.show { display: block; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        label { display: block; font-size: 12px; font-weight: 600; color: #666; margin-bottom: 5px; text-transform: uppercase; }
+        input, select, textarea { 
+            width: 100%; padding: 10px; border: 1px solid var(--border); 
+            border-radius: 6px; font-size: 14px; box-sizing: border-box;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; padding: 12px; font-size: 12px; color: #888; border-bottom: 2px solid var(--border); }
+        td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .status-new { background: #e0f2fe; color: #0369a1; }
+        .status-inprogress { background: #fef3c7; color: #92400e; }
+        .status-closed { background: #dcfce7; color: #166534; }
+
+        .stats { display: flex; gap: 15px; margin-top: 25px; }
+        .stat-card { background: #fff; padding: 15px; border: 1px solid var(--border); border-radius: 8px; flex: 1; }
+        .stat-val { font-size: 20px; font-weight: 700; display: block; }
+        .stat-lbl { font-size: 12px; color: #666; }
+
+        a.drive-link { color: var(--primary); text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Case Tracker</h1>
+        <div id="syncStatus" class="status-msg"></div>
+    </header>
+
+    <div class="controls">
+        <button onclick="toggleForm()">+ New Case</button>
+        <button class="secondary" onclick="syncToCloud()">☁️ Sync to Cloud</button>
+        <button class="secondary" onclick="loadFromCloud()">🔄 Refresh List</button>
+        <button class="secondary" onclick="exportCSV()">📊 Export CSV</button>
+    </div>
+
+    <input type="text" id="searchInput" class="search-bar" placeholder="Search by name, ref, or solicitor..." onkeyup="render()">
+
+    <div id="form" class="form-section">
+        <h3 id="formTitle">Add Case</h3>
+        <div class="form-row">
+            <div><label>Case Ref *</label><input type="text" id="caseRef"></div>
+            <div><label>Client Name *</label><input type="text" id="clientName"></div>
+        </div>
+        <div class="form-row">
+            <div><label>Status</label>
+                <select id="status">
+                    <option>New</option><option>In Progress</option><option>On Hold</option><option>Closed</option>
+                </select>
+            </div>
+            <div><label>Solicitor</label><input type="text" id="solicitor"></div>
+        </div>
+        <div class="form-row">
+            <div><label>Next Review</label><input type="date" id="nextReview"></div>
+            <div><label>Upload Document</label><input type="file" id="fileInput"></div>
+        </div>
+        <div style="margin-top: 10px;">
+            <button id="saveBtn" onclick="saveCase()">Save Case & Sync</button>
+            <button class="secondary" onclick="toggleForm()">Cancel</button>
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ref</th><th>Client</th><th>Status</th><th>Solicitor</th><th>Drive</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card"><span class="stat-val" id="totalCount">0</span><span class="stat-lbl">Total</span></div>
+        <div class="stat-card"><span class="stat-val" id="activeCount">0</span><span class="stat-lbl">Active</span></div>
+        <div class="stat-card"><span class="stat-val" id="closedCount">0</span><span class="stat-lbl">Closed</span></div>
+    </div>
+</div>
+
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_lcXiklVTSI202nyYttSrk0BqbLJr6YYQEHkvo8x8Um8zamvySLXPULfq3dFA-abj/exec'; 
+    // 1. UPDATE THIS URL
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqpD5hi7QtoRocqC15RNnYYOV1bv5QE72HRdtAH4N46YjPaaC1akawn98_NG_B7K5R/exec'; 
 
     let cases = JSON.parse(localStorage.getItem('cases')) || [];
     let editingId = null;
@@ -22,12 +164,11 @@
     async function saveCase() {
         const ref = document.getElementById('caseRef').value;
         const client = document.getElementById('clientName').value;
-        if (!ref || !client) return alert("Ref and Client are required");
+        if (!ref || !client) return alert("Required fields missing");
 
         const btn = document.getElementById('saveBtn');
-        btn.disabled = true; btn.innerText = "Syncing...";
+        btn.disabled = true; btn.innerText = "Processing...";
 
-        // Handle File conversion immediately
         const fileInput = document.getElementById('fileInput');
         let fileData = null;
         if (fileInput.files.length > 0) {
@@ -40,13 +181,12 @@
             id: editingId || Date.now(),
             caseRef: ref,
             clientName: client,
-            status: document.getElementById('status').value || "New",
-            solicitor: document.getElementById('solicitor').value || "",
-            nextReview: document.getElementById('nextReview').value || "",
+            status: document.getElementById('status').value,
+            solicitor: document.getElementById('solicitor').value,
+            nextReview: document.getElementById('nextReview').value,
             folderUrl: editingId ? (cases.find(c => c.id == editingId)?.folderUrl || "") : ""
         };
 
-        // Update LOCAL state immediately (This prevents it from "deleting")
         if (editingId) {
             cases = cases.map(c => c.id == editingId ? caseObj : c);
         } else {
@@ -54,9 +194,8 @@
         }
 
         localStorage.setItem('cases', JSON.stringify(cases));
-        render(); // Show the user the new case right now
+        render();
         
-        // Push to cloud in the background
         await syncToCloud(caseObj.caseRef, fileData);
         
         btn.disabled = false; btn.innerText = "Save Case & Sync";
@@ -72,7 +211,6 @@
                 body: JSON.stringify({ cases, targetRef, file: fileObj })
             });
             updateStatus("✅ Cloud Updated");
-            // WE DO NOT AUTO-LOAD HERE. It's too fast for Google.
         } catch (e) {
             updateStatus("❌ Sync Error");
         }
@@ -83,14 +221,11 @@
         try {
             const resp = await fetch(SCRIPT_URL);
             const data = await resp.json();
-            if (data && Array.isArray(data) && data.length > 0) {
-                // Merge data: keep local folderUrls if cloud is missing them
+            if (data && Array.isArray(data)) {
                 cases = data;
                 localStorage.setItem('cases', JSON.stringify(cases));
                 render();
                 updateStatus("✅ Loaded");
-            } else {
-                updateStatus("⚠️ Cloud is empty");
             }
         } catch (e) {
             updateStatus("❌ Load Failed");
@@ -98,8 +233,9 @@
     }
 
     function render() {
-        const query = (document.getElementById('searchInput').value || "").toLowerCase();
+        const query = (document.getElementById('searchInput')?.value || "").toLowerCase();
         const tbody = document.getElementById('tbody');
+        if(!tbody) return;
         tbody.innerHTML = '';
 
         const filtered = cases.filter(c => 
@@ -109,9 +245,9 @@
 
         filtered.forEach(c => {
             const row = `<tr>
-                <td><strong>${c.caseRef}</strong></td>
-                <td>${c.clientName}</td>
-                <td><span class="badge status-${(c.status || 'new').toLowerCase().replace(' ', '')}">${c.status}</span></td>
+                <td><strong>${c.caseRef || ''}</strong></td>
+                <td>${c.clientName || ''}</td>
+                <td><span class="badge status-${(c.status || 'new').toLowerCase().replace(/\s+/g, '')}">${c.status || 'New'}</span></td>
                 <td>${c.solicitor || '-'}</td>
                 <td>${c.folderUrl ? `<a href="${c.folderUrl}" target="_blank" class="drive-link">📁 View</a>` : '<i>Syncing...</i>'}</td>
                 <td>
@@ -127,5 +263,56 @@
         document.getElementById('closedCount').innerText = cases.filter(c => c.status === 'Closed').length;
     }
 
-    // [Keep helper functions updateStatus, deleteCase, editCase, exportCSV, toBase64 as they were]
+    function deleteCase(id) {
+        if (confirm("Delete this case?")) {
+            cases = cases.filter(c => c.id != id);
+            localStorage.setItem('cases', JSON.stringify(cases));
+            render();
+            syncToCloud();
+        }
+    }
+
+    function editCase(id) {
+        const c = cases.find(x => x.id == id);
+        if(!c) return;
+        editingId = id;
+        document.getElementById('formTitle').innerText = "Edit Case";
+        document.getElementById('caseRef').value = c.caseRef || '';
+        document.getElementById('clientName').value = c.clientName || '';
+        document.getElementById('status').value = c.status || 'New';
+        document.getElementById('solicitor').value = c.solicitor || '';
+        document.getElementById('nextReview').value = c.nextReview || '';
+        document.getElementById('form').classList.add('show');
+    }
+
+    function exportCSV() {
+        let csv = "Ref,Client,Status,Solicitor,Review,Folder\n";
+        cases.forEach(c => {
+            csv += `"${c.caseRef}","${c.clientName}","${c.status}","${c.solicitor}","${c.nextReview}","${c.folderUrl}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `cases_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+    }
+
+    function updateStatus(msg) {
+        const el = document.getElementById('syncStatus');
+        if(el) el.innerText = msg;
+    }
+
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+
+    // START THE APP
+    render();
 </script>
+
+</body>
+</html>

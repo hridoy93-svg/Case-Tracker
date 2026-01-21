@@ -288,6 +288,14 @@ function editCase(id) {
 
 function deleteCase(id) {
   if (confirm('Delete this case?')) {
+    var caseRef = '';
+    for (var i = 0; i < cases.length; i++) {
+      if (cases[i].id === id) {
+        caseRef = cases[i].caseRef;
+        break;
+      }
+    }
+    
     var newCases = [];
     for (var i = 0; i < cases.length; i++) {
       if (cases[i].id !== id) {
@@ -297,6 +305,14 @@ function deleteCase(id) {
     cases = newCases;
     saveData();
     render();
+    
+    if (caseRef) {
+      fetch(SCRIPT_URL + '?caseRef=' + encodeURIComponent(caseRef), {
+        method: 'GET'
+      }).catch(function(err) {
+        console.log('Delete from sheets error:', err);
+      });
+    }
   }
 }
 

@@ -119,6 +119,127 @@ async function saveCase() {
     performSync(newCase.caseRef, fileObj);
 }
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitor Case Tracker</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        :root { --primary: #0070f3; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --bg: #fafafa; --card-bg: #ffffff; --text: #171717; --border: #eaeaea; }
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 20px; background: var(--bg); color: var(--text); }
+        .container { max-width: 1200px; margin: 0 auto; background: var(--card-bg); padding: 32px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+        button { background: #000; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: 0.2s; }
+        button:hover { background: #333; transform: translateY(-1px); }
+        .search-bar { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; }
+        .form-section { background: #f9f9f9; padding: 24px; border-radius: 8px; margin-bottom: 24px; border: 1px solid var(--border); display: none; }
+        .form-section.show { display: block; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; box-sizing: border-box; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #fafafa; padding: 12px; text-align: left; font-size: 12px; color: #666; border-bottom: 2px solid var(--border); }
+        td { padding: 14px 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        .status { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+        .status-new { background: #eff6ff; color: #1e40af; }
+        .status-progress { background: #fffbeb; color: #92400e; }
+        .status-closed { background: #ecfdf5; color: #065f46; }
+        .stats { display: flex; gap: 20px; margin-top: 32px; border-top: 1px solid var(--border); padding-top: 24px; }
+        .stat-card { background: #fff; padding: 16px; border: 1px solid var(--border); border-radius: 8px; flex: 1; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Solicitor Case Tracker</h1>
+        <span id="syncStatus" style="font-size: 12px; color: var(--primary);"></span>
+    </header>
+  
+    <div class="controls">
+        <button onclick="toggleForm()">+ New Case</button>
+        <button onclick="performSync()" style="background:var(--primary)">Sync to Cloud</button>
+        <button onclick="loadFromSheets()" style="background:#555">Refresh List</button>
+        <button onclick="exportCSV()" style="background:var(--success)">Export CSV</button>
+    </div>
+
+    <input type="text" id="searchInput" class="search-bar" placeholder="Search cases..." onkeyup="render()">
+
+    <div class="form-section" id="form">
+        <h2 id="formTitle">Add Case</h2>
+        <div class="form-row">
+            <div><label>Ref *</label><input type="text" id="caseRef"></div>
+            <div><label>Client *</label><input type="text" id="clientName"></div>
+        </div>
+        <div class="form-row">
+            <div><label>Status</label><select id="status"><option>New</option><option>In Progress</option><option>Closed</option></select></div>
+            <div><label>Solicitor</label><input type="text" id="solicitor"></div>
+        </div>
+        <div class="form-row">
+            <div><label>Next Review</label><input type="date" id="nextReview"></div>
+            <div><label>Upload File</label><input type="file" id="fileInput"></div>
+        </div>
+        <button id="saveBtn" onclick="saveCase()">Save Case</button>
+        <button onclick="toggleForm()" style="background:#666">Cancel</button>
+    </div>
+
+    <table>
+        <thead><tr><th>Ref</th><th>Client</th><th>Status</th><th>Solicitor</th><th>Drive</th><th>Actions</th></tr></thead>
+        <tbody id="tbody"></tbody>
+    </table>
+
+    <div class="stats">
+        <div class="stat-card">Total: <span id="total">0</span></div>
+        <div class="stat-card">Active: <span id="active">0</span></div>
+    </div>
+</div>
+
+<script>
+const SCRIPT_URL = 'PASTE_YOUR_NEW_DEPLOYMENT_URL_HERE'; 
+
+let cases = JSON.parse(localStorage.getItem('cases')) || [];
+let editingId = null;
+
+function toggleForm() { document.getElementById('form').classList.toggle('show'); resetForm(); }
+function resetForm() { editingId = null; document.getElementById('formTitle').innerText = "Add Case"; document.getElementById('caseRef').value = ''; document.getElementById('clientName').value = ''; }
+
+async function saveCase() {
+    const ref = document.getElementById('caseRef').value;
+    const client = document.getElementById('clientName').value;
+    if(!ref || !client) return alert("Required fields missing");
+
+    const fileInput = document.getElementById('fileInput');
+    let fileObj = null;
+    if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        const base64 = await new Promise(r => { reader.onload = () => r(reader.result); reader.readAsDataURL(file); });
+        fileObj = { data: base64.split(',')[1], name: file.name, type: file.type };
+    }
+
+    const newCase = {
+        id: editingId || Date.now(),
+        caseRef: ref,
+        clientName: client,
+        status: document.getElementById('status').value,
+        solicitor: document.getElementById('solicitor').value,
+        nextReview: document.getElementById('nextReview').value,
+        folderUrl: editingId ? (cases.find(c => c.id === editingId)?.folderUrl || "") : ""
+    };
+
+    if (editingId) cases = cases.map(c => c.id === editingId ? newCase : c);
+    else cases.push(newCase);
+
+    localStorage.setItem('cases', JSON.stringify(cases));
+    render();
+    toggleForm();
+    
+    // Sync to cloud in background
+    performSync(newCase.caseRef, fileObj);
+}
+
 async function performSync(specificRef = null, fileObj = null) {
     document.getElementById('syncStatus').innerText = "Syncing...";
     try {

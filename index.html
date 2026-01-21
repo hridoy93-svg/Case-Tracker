@@ -238,23 +238,30 @@
         if(!tbody) return;
         tbody.innerHTML = '';
 
-        const filtered = cases.filter(c => 
-            (c.clientName || "").toLowerCase().includes(query) || 
-            (c.caseRef || "").toLowerCase().includes(query)
-        );
+        const filtered = cases.filter(c => {
+            const name = (c.clientName || c.clientname || "").toLowerCase();
+            const ref = (c.caseRef || c.caseref || "").toLowerCase();
+            return name.includes(query) || ref.includes(query);
+        });
 
         filtered.forEach(c => {
-            // Vibe Check: Is the folder link ready?
-            const driveCell = c.folderUrl 
-                ? `<a href="${c.folderUrl}" target="_blank" class="drive-link">📁 Open Folder</a>` 
-                : `<span style="color:#888; font-size:11px;">⏳ Uploading... <br>(Click Refresh in 10s)</span>`;
+            // Support both camelCase and lowercase keys from Google
+            const displayRef = c.caseRef || c.caseref || 'N/A';
+            const displayClient = c.clientName || c.clientname || 'Unknown';
+            const displayStatus = c.status || 'New';
+            const displaySolicitor = c.solicitor || '-';
+            const displayFolder = c.folderUrl || c.folderurl || "";
 
             const row = `<tr>
-                <td><strong>${c.caseRef || ''}</strong></td>
-                <td>${c.clientName || ''}</td>
-                <td><span class="badge status-${(c.status || 'new').toLowerCase().replace(/\s+/g, '')}">${c.status || 'New'}</span></td>
-                <td>${c.solicitor || '-'}</td>
-                <td>${driveCell}</td>
+                <td><strong>${displayRef}</strong></td>
+                <td>${displayClient}</td>
+                <td><span class="badge status-${displayStatus.toLowerCase().replace(/\s+/g, '')}">${displayStatus}</span></td>
+                <td>${displaySolicitor}</td>
+                <td>
+                    ${displayFolder 
+                        ? `<a href="${displayFolder}" target="_blank" class="drive-link">📁 Open Folder</a>` 
+                        : `<span style="color:#888; font-size:11px;">⏳ Syncing...<br>(Refresh in 10s)</span>`}
+                </td>
                 <td>
                     <button class="secondary" style="padding:4px 8px" onclick="editCase(${c.id})">Edit</button>
                     <button class="danger" style="padding:4px 8px" onclick="deleteCase(${c.id})">Del</button>
@@ -264,8 +271,8 @@
         });
 
         document.getElementById('totalCount').innerText = cases.length;
-        document.getElementById('activeCount').innerText = cases.filter(c => c.status !== 'Closed').length;
-        document.getElementById('closedCount').innerText = cases.filter(c => c.status === 'Closed').length;
+        document.getElementById('activeCount').innerText = cases.filter(c => (c.status || '').toLowerCase() !== 'closed').length;
+        document.getElementById('closedCount').innerText = cases.filter(c => (c.status || '').toLowerCase() === 'closed').length;
     }
 
     function deleteCase(id) {
